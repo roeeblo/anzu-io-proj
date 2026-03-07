@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Unity
+anzu.io_unity/[Ll]ibrary/
+anzu.io_unity/[Tt]emp/
+anzu.io_unity/[Oo]bj/
+anzu.io_unity/[Bb]uild/
+anzu.io_unity/[Bb]uilds/
+anzu.io_unity/[Ll]ogs/
+anzu.io_unity/[Uu]ser[Ss]ettings/
+anzu.io_unity/.vs/
+anzu.io_unity/*.csproj
+anzu.io_unity/*.unityproj
+anzu.io_unity/*.sln
+anzu.io_unity/*.suo
+anzu.io_unity/*.user
+anzu.io_unity/*.pidb
+anzu.io_unity/*.booproj
+anzu.io_unity/.idea/
+anzu.io_unity/[Mm]emory[Cc]apture/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+*.local
+
+# IDE
+.idea/
+*.code-workspace

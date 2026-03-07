@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commands</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; padding: 20px; max-width: 400px; margin: 0 auto; }
+    h1 { font-size: 1.2rem; margin-bottom: 12px; }
+    .status { margin-bottom: 12px; padding: 8px; border-radius: 6px; font-size: 0.9rem; }
+    .status.connected { background: #d4edda; color: #155724; }
+    .status.disconnected { background: #f8d7da; color: #721c24; }
+    .row { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    button { padding: 10px 16px; font-size: 1rem; cursor: pointer; border: 1px solid #ccc; border-radius: 6px; background: #fff; }
+    button:hover { background: #f0f0f0; }
+    button:active { background: #e0e0e0; }
+    .spawn { margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee; }
+    .spawn label { display: block; margin-bottom: 4px; font-size: 0.9rem; }
+    .spawn input, .spawn select { padding: 6px 8px; margin-right: 8px; margin-bottom: 8px; width: 80px; }
+    .spawn button { margin-top: 8px; }
+    .error { background: #f8d7da; color: #721c24; padding: 8px; border-radius: 6px; margin-top: 12px; font-size: 0.85rem; }
+    #commandArea.disabled { opacity: 0.6; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <h1>Commands</h1>
+  <div id="status" class="status disconnected">Connecting...</div>
+  <div id="unityStatus" class="status disconnected" style="margin-top: 6px;">Waiting for Unity (press Play in Unity first)</div>
+  <div id="gameOverStatus" class="status disconnected" style="margin-top: 6px; display: none; background: #fff3cd; color: #856404;">Game Over – no more commands.</div>
+
+  <div id="commandArea">
+    <div class="row">
+      <button data-cmd="MOVE_LEFT">MOVE LEFT</button>
+      <button data-cmd="MOVE_RIGHT">MOVE RIGHT</button>
+    </div>
+    <div class="row">
+      <button data-cmd="STOP">STOP</button>
+      <button data-cmd="JUMP">JUMP</button>
+    </div>
+    <div class="spawn">
+      <label>ADD_SCORE</label>
+      <input type="number" id="scoreAmount" value="100" min="1" max="999" style="width: 70px;">
+      <button id="btnAddScore">Add Score</button>
+    </div>
+    <div class="spawn">
+      <label>SPAWN_ITEM</label>
+      <select id="itemId">
+        <option value="gem">gem</option>
+        <option value="cherry">cherry</option>
+      </select>
+      <input type="number" id="spawnX" value="0" placeholder="X" step="any">
+      <input type="number" id="spawnY" value="0" placeholder="Y" step="any">
+      <button id="btnSpawn">Spawn</button>
+    </div>
+  </div>
+  <div id="errorBox" class="error" style="display: none;"></div>
+
+  <script>
+    const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const host = location.host || 'localhost:8080';
+    const ws = new WebSocket(protocol + '//' + host);
+
+    const status = document.getElementById('status');
+    const unityStatus = document.getElementById('unityStatus');
+    function setConnected(ok) {
+      status.textContent = ok ? 'Connected to server' : 'Disconnected – start server (node src/app.js)';
+      status.className = 'status ' + (ok ? 'connected' : 'disconnected');
+    }
+    function setUnityReady(ok) {
+      unityStatus.textContent = ok ? 'Unity ready – buttons will send commands' : 'Waiting for Unity (press Play in Unity first)';
+      unityStatus.className = 'status ' + (ok ? 'connected' : 'disconnected');
+    }
+
+    ws.onopen = () => setConnected(true);
+    ws.onclose = () => { setConnected(false); setUnityReady(false); };
+    ws.onerror = () => setConnected(false);
+
+    const errorBox = document.getElementById('errorBox');
+    function showError(msg) {
+      errorBox.textContent = msg;
+      errorBox.style.display = msg ? 'block' : 'none';
+    }
+    const gameOverStatus = document.getElementById('gameOverStatus');
+    const commandArea = document.getElementById('commandArea');
+    function setGameOver(over) {
+      gameOverStatus.style.display = over ? 'block' : 'none';
+      gameOverStatus.textContent = over ? 'Game Over – no more commands.' : '';
+      commandArea.classList.toggle('disabled', !!over);
+    }
+
+    ws.onmessage = (e) => {
+      try {
+        const d = JSON.parse(e.data);
+        if (d.type === 'UNITY_READY') { setUnityReady(!!d.value); if (!d.value) setGameOver(false); }
+        else if (d.type === 'SPAWN_ERROR') showError('Exception: ' + (d.message || 'Out of bounds'));
+        else if (d.type === 'GAME_OVER') setGameOver(true);
+      } catch (_) {}
+    };
+
+    function send(obj) {
+      if (ws.readyState !== WebSocket.OPEN) return;
+      ws.send(JSON.stringify(obj));
+    }
+
+    document.querySelectorAll('[data-cmd]').forEach(btn => {
+      btn.addEventListener('click', () => send({ type: btn.dataset.cmd }));
+    });
+
+    document.getElementById('btnAddScore').addEventListener('click', () => {
+      const amount = parseInt(document.getElementById('scoreAmount').value, 10) || 100;
+      send({ type: 'ADD_SCORE', payload: { amount } });
+    });
+
+    document.getElementById('btnSpawn').addEventListener('click', () => {
+      showError('');
+      const itemId = document.getElementById('itemId').value;
+      const x = parseFloat(document.getElementById('spawnX').value) || 0;
+      const y = parseFloat(document.getElementById('spawnY').value) || 0;
+      send({ type: 'SPAWN_ITEM', payload: { itemId, name: itemId, prefabType: itemId, x, y } });
+    });
+  </script>
+</body>
+</html>
