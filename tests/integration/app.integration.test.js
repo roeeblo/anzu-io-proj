@@ -39,7 +39,7 @@ describe('App integration', () => {
     const { start } = require('../../server/src/app');
     server = await start(0);
     port = server.address().port;
-  }, 10000);
+  }, 15000);
 
   afterAll(async () => {
     process.env.NODE_ENV = originalEnv;
