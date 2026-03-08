@@ -34,8 +34,8 @@ A database (MongoDB) is used for spawnable items even though it could work with 
 - Client identification in handshake
 HANDSHAKE_ACK includes a client name (for example "unity" or "postman"). This allows the server to distinguish between client types and apply different behaviour if needed.
 
-- CI pipeline
-GitHub Actions runs the full test suite on every push and pull request to ensure new changes do not break the system.
+- CI pipeline & Docker Container
+GitHub Actions runs the full test suite on every push and pull request to ensure new changes do not break the system, as well as contanirized the server with docker for easy use.
 
 - Dependabot
 Runs weekly and creates pull requests for dependency updates so libraries and security remain up to date.
