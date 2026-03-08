@@ -86,7 +86,8 @@ Spawns an item (for example gem or cherry) at a position. Payload includes prefa
 
 ## How to run
 
-<img width="1148" height="480" alt="image" src="https://github.com/user-attachments/assets/0fa79275-cc8d-4261-a522-ebe3ce9ffceb" />
+![0308](https://github.com/user-attachments/assets/718aeb20-babb-42ce-9128-612c89dee646)
+
 
 1. Clone the repository
 2. Run the Node.js server
