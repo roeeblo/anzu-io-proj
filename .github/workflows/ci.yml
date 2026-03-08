@@ -24,3 +24,14 @@ jobs:
 
       - name: Run tests
         run: npm test -- --testPathIgnorePatterns=tests/db
+
+      - name: Build Docker image
+        run: docker build -t anzu-server ./server
+
+      - name: Docker smoke test
+        run: |
+          docker run -d -p 8080:8080 --name anzu-smoke anzu-server
+          sleep 3
+          curl -f -s -o /dev/null http://localhost:8080 || (docker logs anzu-smoke; exit 1)
+          docker stop anzu-smoke
+          docker rm anzu-smoke
