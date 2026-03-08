@@ -127,11 +127,11 @@ WITHOUT DOCKER (Option 1):
 
 1. Clone the repository
 2. Run the Node.js server
-cd server  
-npm install  
+cd server
+npm install
 node src/app.js
 
-The server will start on http://localhost:8080.  
+The server will start on http://localhost:8080.
 Leave the terminal open (!!!)
 
 3. Browser controller (optional, but recommended :) )
@@ -149,7 +149,7 @@ SPAWN_ITEM gem 0 0
 SPAWN_ITEM cherry 2 -1
 
 5. Run the Unity client
-Open Unity Hub → Open Project → select the anzu.io_unity folder.
+Open Unity Hub, Open Project, select the anzu.io_unity folder.
 Open the main scene and press Play.
 Commands from the browser or terminal will now affect the game.
 
