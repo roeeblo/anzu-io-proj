@@ -182,7 +182,7 @@ This runs all Jest tests.
 
 ## Unity tests
 
-Open Unity → Window → General → Test Runner
+Open Unity- Window- General- Test Runner
 
 Run:
 - Edit Mode tests
