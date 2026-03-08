@@ -1,4 +1,4 @@
-## Anzu.io – Server–Unity Communication
+## Anzu.io: Server-Unity Communication
 
 This project focuses on the communication architecture between a Node.js server and a Unity client.  
 The unity gameplay itself is intentionally minimal and not meant to be a fully designed game.
