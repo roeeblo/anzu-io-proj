@@ -40,6 +40,9 @@ GitHub Actions runs the full test suite on every push and pull request to ensure
 - Dependabot
 Runs weekly and creates pull requests for dependency updates so libraries and security remain up to date.
 
+- Logging and debug visibility
+Additional comments and descriptive console prints were added across the server and tests to indicate success, failure, and flow. This helps track behaviour during tests and makes CI logs easier to read when something fails.
+
 ## Design patterns used
 
 - Singleton  
