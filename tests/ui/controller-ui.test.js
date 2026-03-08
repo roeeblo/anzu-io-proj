@@ -54,6 +54,7 @@ describe('Controller UI', () => {
   let MockWs;
 
   beforeAll(() => {
+    console.log('[Controller UI] suite running');
     dom = new JSDOM(html, {
       runScripts: 'dangerously',
       url: 'http://localhost:8080',

@@ -80,22 +80,45 @@ Spawns an item (for example gem or cherry) at a position. Payload includes prefa
 
 ## Requirements
 
-- Node.js 18 or newer
+- **Without Docker:** Node.js 18 or newer
+- **With Docker:** Docker and Docker Compose
 - Unity 2018 or newer (open the anzu.io_unity project)
-- MongoDB optional
+- MongoDB optional (for spawnables; server runs without it)
 
 ## How to run
 
-1. Clone the repository
-2. Run the Node.js server
-cd server  
-npm install  
-node src/app.js
+You can run the server **with Docker** or **without Docker** (local Node.js).
 
-The server will start on http://localhost:8080.  
-Leave the terminal open (!!!)
+### Option A: Without Docker (local Node.js)
 
-3. Browser controller (optional, but recommended :) )
+1. Clone the repository.
+2. Run the Node.js server:
+   ```bash
+   cd server
+   npm install
+   node src/app.js
+   ```
+   The server will start on http://localhost:8080. Leave the terminal open.
+
+### Option B: With Docker
+
+From the repository root:
+
+```bash
+docker compose up --build
+```
+
+The server will start on http://localhost:8080. To run in the background: `docker compose up -d`.
+
+To stop: `docker compose down`.
+
+*(With Docker there is no interactive server terminal for typing commands; use the browser UI or run without Docker for that.)*
+
+---
+
+**Then (same for both options):**
+
+3. Browser controller (optional, but recommended)
 Open a browser and go to:
 http://localhost:8080
 

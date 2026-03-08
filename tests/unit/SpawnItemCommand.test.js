@@ -4,6 +4,10 @@ const { createMockWs } = require('../mocks/mockWs');
 describe('SpawnItemCommand', () => {
   const defaultBounds = { minX: -20, maxX: 20, minY: -15, maxY: 15 };
 
+  beforeAll(() => {
+    console.log('[SpawnItemCommand] suite running');
+  });
+
   describe('parseArgs', () => {
     it('returns { itemId, x, y } for valid "itemId x y"', () => {
       const cmd = new SpawnItemCommand('gem 0 0', null, defaultBounds);

@@ -1,6 +1,9 @@
 const CommandFactory = require('../../server/src/commands/CommandFactory');
 
 describe('CommandFactory', () => {
+  beforeAll(() => {
+    console.log('[CommandFactory] suite running');
+  });
   describe('create', () => {
     it('returns MoveLeftCommand for MOVE_LEFT', () => {
       const cmd = CommandFactory.create('MOVE_LEFT');

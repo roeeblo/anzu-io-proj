@@ -27,6 +27,9 @@ afterAll(async () => {
 });
 
 describe('DB', () => {
+  beforeAll(() => {
+    console.log('[DB] suite running');
+  });
   it('connect() returns db and getDb() returns same', async () => {
     const d = dbModule.getDb();
     expect(d).not.toBeNull();

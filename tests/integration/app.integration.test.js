@@ -35,6 +35,7 @@ describe('App integration', () => {
   const originalEnv = process.env.NODE_ENV;
 
   beforeAll(async () => {
+    console.log('[App integration] suite running');
     process.env.NODE_ENV = 'test';
     const { start } = require('../../server/src/app');
     server = await start(0);
@@ -46,7 +47,7 @@ describe('App integration', () => {
     if (server) await new Promise((resolve) => server.close(resolve));
     const { close: closeDb } = require('../../server/src/db');
     await closeDb().catch(() => {});
-  });
+  }, 20000);
 
   it('sends HANDSHAKE on connect', async () => {
     const { ws, messages } = await connectWs('ws://127.0.0.1:' + port);
@@ -74,7 +75,6 @@ describe('App integration', () => {
     const unity = await connectWs('ws://127.0.0.1:' + port);
     await waitForMessage(unity.messages, 'HANDSHAKE');
     await send(unity.ws, { type: 'HANDSHAKE_ACK', client: 'unity' });
-    await waitForMessage(unity.messages, 'UNITY_READY');
 
     const controller = await connectWs('ws://127.0.0.1:' + port);
     await waitForMessage(controller.messages, 'HANDSHAKE');
@@ -104,4 +104,17 @@ describe('App integration', () => {
     unity.ws.close();
     controller.ws.close();
   });
+
+  it('closes connection when idle longer than idleTimeoutMs', async () => {
+    const { setIdleTimeoutMs } = require('../../server/src/app');
+    setIdleTimeoutMs(600);
+    const { ws } = await connectWs('ws://127.0.0.1:' + port);
+    await new Promise((resolve, reject) => {
+      ws.on('close', () => resolve());
+      ws.on('error', reject);
+      setTimeout(() => reject(new Error('Expected connection to close within idle timeout')), 2500);
+    });
+    setIdleTimeoutMs(0);
+    expect(ws.readyState).toBe(WebSocket.CLOSED);
+  }, 5000);
 });

@@ -2,6 +2,9 @@ const { AddScoreCommand } = require('../../server/src/commands/AddScoreCommand')
 const { createMockWs } = require('../mocks/mockWs');
 
 describe('AddScoreCommand', () => {
+  beforeAll(() => {
+    console.log('[AddScoreCommand] suite running');
+  });
   it('execute(ws) sends JSON with type ADD_SCORE and payload.amount from constructor', () => {
     const ws = createMockWs();
     const cmd = new AddScoreCommand('5');

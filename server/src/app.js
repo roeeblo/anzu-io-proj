@@ -103,6 +103,9 @@ const RECONNECT_WINDOW_MS = 15000;
 const RECONNECT_THRESHOLD = 12;
 const _connectionTimes = [];
 
+// Close connection if no message received for this many ms. 0 = disabled. Set IDLE_TIMEOUT_MS (e.g. 300000) in production to avoid connections staying open indefinitely.
+let idleTimeoutMs = Number(process.env.IDLE_TIMEOUT_MS) || 0;
+
 function trackConnection() {
   const now = Date.now();
   _connectionTimes.push(now);
@@ -134,7 +137,8 @@ const server = http.createServer((req, res) => {
 const wss = new WebSocket.Server({ server });
 const validTypes = getValidTypes();
 
-function start(port = 8080) {
+function start(port = 8080, options = {}) {
+  idleTimeoutMs = options.idleTimeoutMs ?? idleTimeoutMs ?? 0;
   return (async () => {
     try {
       db = await connectDb();
@@ -157,12 +161,32 @@ function start(port = 8080) {
 
 if (process.env.NODE_ENV !== 'test') start(8080);
 
+function scheduleIdleClose(ws) {
+  if (!idleTimeoutMs || idleTimeoutMs <= 0) return;
+  if (ws._idleTimer) clearTimeout(ws._idleTimer);
+  ws._idleTimer = setTimeout(() => {
+    ws._idleTimer = null;
+    try {
+      if (ws.readyState === WebSocket.OPEN) ws.close();
+    } catch (e) {}
+  }, idleTimeoutMs);
+}
+
+function clearIdleTimer(ws) {
+  if (ws._idleTimer) {
+    clearTimeout(ws._idleTimer);
+    ws._idleTimer = null;
+  }
+}
+
 wss.on('connection', (ws) => {
   trackConnection();
   allConnections.add(ws);
   sendHandshake(ws);
+  scheduleIdleClose(ws);
 
   ws.on('message', (message) => {
+    scheduleIdleClose(ws);
     let data;
     try {
       data = JSON.parse(message);
@@ -183,7 +207,10 @@ wss.on('connection', (ws) => {
     handleControllerMessage(ws, data);
   });
 
-  ws.on('close', () => handleClose(ws));
+  ws.on('close', () => {
+    clearIdleTimer(ws);
+    handleClose(ws);
+  });
 });
 
 if (process.env.NODE_ENV !== 'test') {
@@ -220,4 +247,8 @@ if (process.env.NODE_ENV !== 'test') {
   });
 }
 
-module.exports = { start };
+function setIdleTimeoutMs(ms) {
+  idleTimeoutMs = ms;
+}
+
+module.exports = { start, setIdleTimeoutMs };
