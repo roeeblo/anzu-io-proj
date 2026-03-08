@@ -30,8 +30,8 @@ jobs:
 
       - name: Docker smoke test
         run: |
-          docker run -d -p 8080:8080 --name anzu-smoke anzu-server
-          sleep 3
+          docker run -d -p 8080:8080 -e CI=true --name anzu-smoke anzu-server
+          sleep 5
           curl -f -s -o /dev/null http://localhost:8080 || (docker logs anzu-smoke; exit 1)
           docker stop anzu-smoke
           docker rm anzu-smoke

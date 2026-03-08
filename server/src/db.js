@@ -13,7 +13,8 @@ const spawnablesSeed = [
 
 async function connect() {
   if (_db) return _db;
-  const options = process.env.NODE_ENV === 'test'
+  const shortTimeout = process.env.NODE_ENV === 'test' || process.env.CI === 'true';
+  const options = shortTimeout
     ? { connectTimeoutMS: 3000, serverSelectionTimeoutMS: 3000 }
     : {};
   _client = new MongoClient(uri, options);
