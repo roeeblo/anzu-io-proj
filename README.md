@@ -88,16 +88,12 @@ Spawns an item (for example gem or cherry) at a position. Payload includes prefa
 
 ## Requirements
 
-- **Without Docker:** Node.js 18 or newer
-- **With Docker:** Docker and Docker Compose
+- Node.js 18 or newer
 - Unity 2018 or newer (open the anzu.io_unity project)
-- MongoDB optional (for spawnables; server runs without it)
+- MongoDB optional
 
 ## How to run
 
-<<<<<<< HEAD
-You can run the server **with Docker** or **without Docker** (local Node.js).
-=======
 WITHOUT DOCKER (Option 1):
 ![0308](https://github.com/user-attachments/assets/718aeb20-babb-42ce-9128-612c89dee646)
 
@@ -107,43 +103,11 @@ WITHOUT DOCKER (Option 1):
 cd server  
 npm install  
 node src/app.js
->>>>>>> 09e7b34352634a867df5d604ec42bbc980dd9ba6
 
-### Option A: Without Docker (local Node.js)
+The server will start on http://localhost:8080.  
+Leave the terminal open (!!!)
 
-<<<<<<< HEAD
-1. Clone the repository.
-2. Run the Node.js server:
-   ```bash
-   cd server
-   npm install
-   node src/app.js
-   ```
-   The server will start on http://localhost:8080. Leave the terminal open.
-
-### Option B: With Docker
-
-From the repository root:
-
-```bash
-docker compose up --build
-```
-
-The server will start on http://localhost:8080. To run in the background: `docker compose up -d`.
-
-To stop: `docker compose down`.
-
-*(With Docker there is no interactive server terminal for typing commands; use the browser UI or run without Docker for that.)*
-
----
-
-**Then (same for both options):**
-
-3. Browser controller (optional, but recommended)
-Open a browser and go to:
-=======
 3. Browser controller (optional, but recommended :) )
->>>>>>> 09e7b34352634a867df5d604ec42bbc980dd9ba6
 http://localhost:8080
 
 4. Commands from terminal (optional)
