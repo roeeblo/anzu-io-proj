@@ -18,6 +18,12 @@ Node.js WebSocket server and Unity client that communicate through commands, wit
 - CI with GitHub Actions and dependency updates with Dependabot
 
 ## Screenshots
+UI:
+<img width="1055" height="879" alt="image" src="https://github.com/user-attachments/assets/a10de9b2-db62-47ff-8337-f4d9887a0266" />
+
+Gameplay:
+<img width="1079" height="734" alt="image" src="https://github.com/user-attachments/assets/6bc1b2ad-81af-42a5-a010-aa0a4e8b3d87" />
+
 
 
 ## Scalability
