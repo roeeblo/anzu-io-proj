@@ -25,7 +25,28 @@ UI:
 Gameplay:
 <img width="1079" height="734" alt="image" src="https://github.com/user-attachments/assets/6bc1b2ad-81af-42a5-a010-aa0a4e8b3d87" />
 
+## Test flow
 
+- Unit tests (Node)
+Verify the command system.
+CommandFactory returns the correct command type and handles unknown types.
+AddScoreCommand validates payload handling.
+SpawnItemCommand validates argument parsing and bounds checking.
+
+- Integration tests (Node)
+Start a real server on a random port to test the communication flow.  
+Tests cover handshake, Unity readiness notification, command forwarding, GAME_OVER propagation, and idle connection cleanup.
+
+- Database tests (Node)
+Verify DB connection, spawnable item seeding (gem, cherry), and retrieval by SpawnItemCommand.
+
+- UI tests (jsdom)
+Mock WebSocket.
+Verify connection status, UNITY_READY updates, button commands, and GAME_OVER behaviour.
+
+- Unity tests (Unity Test Runner)
+Edit Mode tests validate CommandFactory behaviour.  
+Play Mode tests validate PlayerController movement and GameManager score logic.
 
 ## Scalability
 
