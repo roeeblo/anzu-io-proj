@@ -29,16 +29,24 @@ Gameplay:
 ## Scalability
 
 - DB layer
+
 A database (MongoDB) is used for spawnable items even though it could work with an enum. This allows adding new items or data later without changing the architecture.
 
 - Client identification in handshake
+
 HANDSHAKE_ACK includes a client name (for example "unity" or "postman"). This allows the server to distinguish between client types and apply different behaviour if needed.
 
-- CI pipeline
-GitHub Actions runs the full test suite on every push and pull request to ensure new changes do not break the system.
+- CI pipeline & Docker Container
+
+GitHub Actions runs the full test suite on every push and pull request to ensure new changes do not break the system, as well as contanirized the server with docker for easy use.
 
 - Dependabot
+
 Runs weekly and creates pull requests for dependency updates so libraries and security remain up to date.
+
+- Logging and debug visibility
+
+Additional comments and descriptive console prints were added across the server and tests to indicate success, failure, and flow. This helps track behaviour during tests and makes CI logs easier to read when something fails.
 
 ## Design patterns used
 
@@ -87,10 +95,23 @@ Spawns an item (for example gem or cherry) at a position. Payload includes prefa
 
 ## How to run
 
+<<<<<<< HEAD
 You can run the server **with Docker** or **without Docker** (local Node.js).
+=======
+WITHOUT DOCKER (Option 1):
+![0308](https://github.com/user-attachments/assets/718aeb20-babb-42ce-9128-612c89dee646)
+
+
+1. Clone the repository
+2. Run the Node.js server
+cd server  
+npm install  
+node src/app.js
+>>>>>>> 09e7b34352634a867df5d604ec42bbc980dd9ba6
 
 ### Option A: Without Docker (local Node.js)
 
+<<<<<<< HEAD
 1. Clone the repository.
 2. Run the Node.js server:
    ```bash
@@ -120,9 +141,10 @@ To stop: `docker compose down`.
 
 3. Browser controller (optional, but recommended)
 Open a browser and go to:
+=======
+3. Browser controller (optional, but recommended :) )
+>>>>>>> 09e7b34352634a867df5d604ec42bbc980dd9ba6
 http://localhost:8080
-
-You will see a page with command buttons.
 
 4. Commands from terminal (optional)
 In the server terminal you can type commands directly:
@@ -139,6 +161,19 @@ SPAWN_ITEM cherry 2 -1
 Open Unity Hub → Open Project → select the anzu.io_unity folder.
 Open the main scene and press Play.
 Commands from the browser or terminal will now affect the game.
+
+---
+
+WITH DOCKER (Option 2):
+
+From the project root run:
+docker compose up --build
+
+Keep the terminal open. Then open http://localhost:8080 in your browser
+
+Leave the container running.
+
+Then follow **steps 3–5 above** to open the browser controller and run the Unity client.
 
 ## Run order
 
