@@ -89,6 +89,7 @@ Spawns an item (for example gem or cherry) at a position. Payload includes prefa
 
 ## How to run
 
+WITHOUT DOCKER (Option 1):
 ![0308](https://github.com/user-attachments/assets/718aeb20-babb-42ce-9128-612c89dee646)
 
 
@@ -102,10 +103,7 @@ The server will start on http://localhost:8080.
 Leave the terminal open (!!!)
 
 3. Browser controller (optional, but recommended :) )
-Open a browser and go to:
 http://localhost:8080
-
-You will see a page with command buttons.
 
 4. Commands from terminal (optional)
 In the server terminal you can type commands directly:
@@ -122,6 +120,19 @@ SPAWN_ITEM cherry 2 -1
 Open Unity Hub → Open Project → select the anzu.io_unity folder.
 Open the main scene and press Play.
 Commands from the browser or terminal will now affect the game.
+
+---
+
+WITH DOCKER (Option 2):
+
+From the project root run:
+docker compose up --build
+
+Keep the terminal open. Then open http://localhost:8080 in your browser
+
+Leave the container running.
+
+Then follow **steps 3–5 above** to open the browser controller and run the Unity client.
 
 ## Run order
 
