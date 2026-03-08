@@ -81,12 +81,7 @@ Spawns an item (for example gem or cherry) at a position. Payload includes prefa
 ## How to run
 
 1. Clone the repository
-
-git clone https://github.com/YOUR_USERNAME/anzu-io-proj.git  
-cd anzu-io-proj
-
 2. Run the Node.js server
-
 cd server  
 npm install  
 node src/app.js
@@ -95,38 +90,25 @@ The server will start on http://localhost:8080.
 Leave the terminal open (!!!)
 
 3. Browser controller (optional, but recommended :) )
-
 Open a browser and go to:
-
 http://localhost:8080
 
 You will see a page with command buttons.
 
 4. Commands from terminal (optional)
-
 In the server terminal you can type commands directly:
-
-MOVE_LEFT  
-MOVE_RIGHT  
-STOP  
-JUMP  
-
-ADD_SCORE  
-ADD_SCORE 50  
-
-SPAWN_ITEM gem 0 0  
+MOVE_LEFT
+MOVE_RIGHT
+STOP
+JUMP
+ADD_SCORE
+ADD_SCORE 50
+SPAWN_ITEM gem 0 0
 SPAWN_ITEM cherry 2 -1
 
 5. Run the Unity client
-
 Open Unity Hub → Open Project → select the anzu.io_unity folder.
-
 Open the main scene and press Play.
-
-The client will connect to the server and the terminal will display:
-
-Unity Client Connected!
-
 Commands from the browser or terminal will now affect the game.
 
 ## Run order
@@ -138,7 +120,6 @@ Commands from the browser or terminal will now affect the game.
 ## Running tests
 
 From the repository root:
-
 npm install  
 npm test
 
@@ -149,7 +130,6 @@ This runs all Jest tests.
 Open Unity → Window → General → Test Runner
 
 Run:
-
 - Edit Mode tests
 - Play Mode tests
 
