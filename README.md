@@ -1,0 +1,171 @@
+## Anzu.io – Server–Unity Communication
+
+This project focuses on the communication architecture between a Node.js server and a Unity client.  
+The unity gameplay itself is intentionally minimal and not meant to be a fully designed game.
+
+Node.js WebSocket server and Unity client that communicate through commands, with a browser controller for manual input.
+
+
+## Features
+
+- WebSocket handshake between server and Unity client
+- Command system (move, jump, stop, add score, spawn items)
+- Browser UI to send commands (http://localhost:8080)
+- Commands can also be sent from the server terminal
+- Unity executes commands and sends responses back to the server
+- Optional MongoDB support for spawnable items (gem, cherry)
+- Tests with Jest and Unity Test Framework
+- CI with GitHub Actions and dependency updates with Dependabot
+
+## Screenshots
+
+
+## Scalability
+
+- DB layer
+A database (MongoDB) is used for spawnable items even though it could work with an enum. This allows adding new items or data later without changing the architecture.
+
+- Client identification in handshake
+HANDSHAKE_ACK includes a client name (for example "unity" or "postman"). This allows the server to distinguish between client types and apply different behaviour if needed.
+
+- CI pipeline
+GitHub Actions runs the full test suite on every push and pull request to ensure new changes do not break the system.
+
+- Dependabot
+Runs weekly and creates pull requests for dependency updates so libraries and security remain up to date.
+
+## Design patterns used
+
+- Singleton  
+GameManager in Unity is a single shared instance (GameManager.Instance). Score and win state are stored there so the whole game uses the same source of truth.
+
+- Command  
+Each action (move, jump, add score, etc) is represented by a command object with Execute() and a type. The server sends a command type and payload, Unity creates the correct command and executes it.
+
+- Factory  
+CommandFactory.Create(data, player) creates the correct command based on the message type. Adding a new command only requires creating a class and registering it in the factory.
+
+## Commands
+
+- MOVE_LEFT  
+Player moves left.
+
+- MOVE_RIGHT  
+Player moves right.
+
+- STOP  
+Stops horizontal movement.
+
+- JUMP  
+Player jumps if grounded.
+
+- ADD_SCORE  
+Adds points to the score. The payload contains an amount. When the score reaches 100 the game sends GAME_OVER.
+
+- SPAWN_ITEM  
+Spawns an item (for example gem or cherry) at a position. Payload includes prefabType, x and y. The server validates bounds. Spawnables can come from MongoDB or built-in defaults.
+
+## Handshake flow
+
+- Server sends HANDSHAKE
+- Client replies with HANDSHAKE_ACK including a client name (for example "unity")
+- Unity sends COMMAND_DONE after executing a command
+- Unity sends GAME_OVER when the player wins
+
+## Requirements
+
+- Node.js 18 or newer
+- Unity 2018 or newer (open the anzu.io_unity project)
+- MongoDB optional
+
+## How to run
+
+1. Clone the repository
+
+git clone https://github.com/YOUR_USERNAME/anzu-io-proj.git  
+cd anzu-io-proj
+
+2. Run the Node.js server
+
+cd server  
+npm install  
+node src/app.js
+
+The server will start on http://localhost:8080.  
+Leave the terminal open (!!!)
+
+3. Browser controller (optional, but recommended :) )
+
+Open a browser and go to:
+
+http://localhost:8080
+
+You will see a page with command buttons.
+
+4. Commands from terminal (optional)
+
+In the server terminal you can type commands directly:
+
+MOVE_LEFT  
+MOVE_RIGHT  
+STOP  
+JUMP  
+
+ADD_SCORE  
+ADD_SCORE 50  
+
+SPAWN_ITEM gem 0 0  
+SPAWN_ITEM cherry 2 -1
+
+5. Run the Unity client
+
+Open Unity Hub → Open Project → select the anzu.io_unity folder.
+
+Open the main scene and press Play.
+
+The client will connect to the server and the terminal will display:
+
+Unity Client Connected!
+
+Commands from the browser or terminal will now affect the game.
+
+## Run order
+
+- Start the server
+- Press Play in Unity
+- Send commands from browser or terminal
+
+## Running tests
+
+From the repository root:
+
+npm install  
+npm test
+
+This runs all Jest tests.
+
+## Unity tests
+
+Open Unity → Window → General → Test Runner
+
+Run:
+
+- Edit Mode tests
+- Play Mode tests
+
+## Project structure
+
+anzu-io-proj/
+
+server/  
+Node server (src/app.js, db.js, commands)  
+public/ contains the browser UI (index.html)
+
+anzu.io_unity/  
+Unity client
+
+tests/  
+Jest tests (unit, integration, db, ui, mocks)
+
+.github/  
+CI workflow and Dependabot
