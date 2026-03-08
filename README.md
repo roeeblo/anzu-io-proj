@@ -11,9 +11,10 @@ Node.js WebSocket server and Unity client that communicate through commands, wit
 - WebSocket handshake between server and Unity client.
 - Command system (move, jump, stop, add score, spawn items).
 - Browser UI to send commands (http://localhost:8080).
-- Commands can also be sent from the server terminal.
+- Commands can also be sent from the server terminal (when running without Docker).
 - Unity executes commands and sends responses back to the server.
 - Optional MongoDB support for spawnable items (gem, cherry).
+- Server can run locally (Node.js) or in Docker (Docker Compose).
 - Tests with Jest and Unity Test Framework.
 - CI with GitHub Actions and dependency updates with Dependabot.
 
