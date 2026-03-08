@@ -1,7 +1,3 @@
-/**
- * Mock WebSocket for unit tests.
- * readyState: 0 CONNECTING, 1 OPEN, 2 CLOSING, 3 CLOSED
- */
 function createMockWs(options = {}) {
   const { readyState = 1, sendCalls = [] } = options;
   const sent = [];

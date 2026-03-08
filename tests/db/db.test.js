@@ -1,7 +1,3 @@
-/**
- * DB tests using mongodb-memory-server. Isolate db module by clearing require cache
- * so MONGODB_URI from env is used when we connect.
- */
 const path = require('path');
 const dbPath = path.resolve(__dirname, '../../server/src/db.js');
 

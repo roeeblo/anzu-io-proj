@@ -1,7 +1,3 @@
-/**
- * Integration tests: real HTTP+WS server, multiple clients, message flow.
- * Run with NODE_ENV=test (Jest sets this). Server listens on port 0 (random).
- */
 const WebSocket = require('ws');
 
 function connectWs(url) {
@@ -86,6 +82,24 @@ describe('App integration', () => {
 
     const addScore = await waitForMessage(unity.messages, 'ADD_SCORE');
     expect(addScore.payload).toEqual({ amount: 10 });
+
+    unity.ws.close();
+    controller.ws.close();
+  });
+
+  it('when Unity sends GAME_OVER, controllers receive it', async () => {
+    const unity = await connectWs('ws://127.0.0.1:' + port);
+    await waitForMessage(unity.messages, 'HANDSHAKE');
+    await send(unity.ws, { type: 'HANDSHAKE_ACK', client: 'unity' });
+
+    const controller = await connectWs('ws://127.0.0.1:' + port);
+    await waitForMessage(controller.messages, 'HANDSHAKE');
+
+    await send(unity.ws, { type: 'GAME_OVER', payload: { message: 'Game ended.' } });
+
+    const gameOver = await waitForMessage(controller.messages, 'GAME_OVER');
+    expect(gameOver.type).toBe('GAME_OVER');
+    expect(gameOver.payload).toMatchObject({ message: 'Game ended.' });
 
     unity.ws.close();
     controller.ws.close();

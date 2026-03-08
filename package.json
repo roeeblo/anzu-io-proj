@@ -6,6 +6,8 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jsdom": "^24.0.0",
     "mongodb-memory-server": "^10.0.0",
     "ws": "^8.19.0"
   }
