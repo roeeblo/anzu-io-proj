@@ -31,7 +31,11 @@ jobs:
       - name: Docker smoke test
         run: |
           docker run -d -p 8080:8080 -e CI=true --name socketrunner-smoke socketrunner-server
-          sleep 5
-          curl -f -s -o /dev/null http://localhost:8080 || (docker logs socketrunner-smoke; exit 1)
+          ok=0
+          for i in $(seq 1 30); do
+            if curl -fsS -o /dev/null http://127.0.0.1:8080/; then ok=1; break; fi
+            sleep 1
+          done
+          if [ "$ok" != "1" ]; then echo "--- socketrunner-smoke logs ---"; docker logs socketrunner-smoke; exit 1; fi
           docker stop socketrunner-smoke
           docker rm socketrunner-smoke
