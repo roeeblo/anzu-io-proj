@@ -50,6 +50,12 @@ public class NetworkProvider : MonoBehaviour
 
 #if UNITY_WEBGL && !UNITY_EDITOR
 
+	private void SendWebGLUtf8Text(string json)
+	{
+		byte[] utf8 = Encoding.UTF8.GetBytes(json);
+		WebGLSocketNative.SR_WS_SendUtf8(_webGlSocketId, utf8, utf8.Length);
+	}
+
 	private IEnumerator ConnectWebGLRoutine()
 	{
 		_cts = new CancellationTokenSource();
@@ -71,7 +77,7 @@ public class NetworkProvider : MonoBehaviour
 			if (st == 1)
 			{
 				Debug.Log("[Network] Socket connected (WebGL)");
-				WebGLSocketNative.SR_WS_SendStr(_webGlSocketId, UnityHandshakeAck);
+				SendWebGLUtf8Text(UnityHandshakeAck);
 				Debug.Log("[Network] Sent HANDSHAKE_ACK (WebGL)");
 				yield break;
 			}
@@ -224,7 +230,7 @@ public class NetworkProvider : MonoBehaviour
 		await _sendLock.WaitAsync(_cts.Token);
 		try
 		{
-			WebGLSocketNative.SR_WS_SendStr(_webGlSocketId, json);
+			SendWebGLUtf8Text(json);
 			Debug.Log("[Network] Sent: " + json);
 		}
 		catch (Exception e)

@@ -59,7 +59,10 @@
   <script>
     const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
     const host = location.host || 'localhost:8080';
-    const ws = new WebSocket(protocol + '//' + host);
+    const params = new URLSearchParams(location.search);
+    const wsOverride = params.get('ws') || params.get('server');
+    const wsUrl = wsOverride || (protocol + '//' + host);
+    const ws = new WebSocket(wsUrl);
 
     const status = document.getElementById('status');
     const unityStatus = document.getElementById('unityStatus');

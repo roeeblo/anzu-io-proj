@@ -14,7 +14,7 @@ internal static class WebGLSocketNative
 	internal static extern int SR_WS_Dequeue(int id, byte[] buffer, int maxLen);
 
 	[DllImport("__Internal")]
-	internal static extern int SR_WS_SendStr(int id, string msg);
+	internal static extern int SR_WS_SendUtf8(int id, byte[] buffer, int length);
 
 	[DllImport("__Internal")]
 	internal static extern void SR_WS_Close(int id);

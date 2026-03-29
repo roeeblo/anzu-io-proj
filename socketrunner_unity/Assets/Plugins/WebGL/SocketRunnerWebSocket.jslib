@@ -52,12 +52,25 @@ mergeInto(LibraryManager.library, {
 		return len;
 	},
 
-	SR_WS_SendStr: function (id, strPtr) {
+	// Text frames: UTF-8 bytes from HEAP (IL2CPP string marshalling is unreliable for SR_WS_SendStr).
+	SR_WS_SendUtf8: function (id, bufferPtr, byteLength) {
 		var entry = __srWsSockets[id];
 		if (!entry || !entry.ws || entry.ws.readyState !== 1) {
 			return 0;
 		}
-		var str = UTF8ToString(strPtr);
+		if (byteLength <= 0 || bufferPtr === 0) {
+			return 0;
+		}
+		var bytes = HEAPU8.subarray(bufferPtr, bufferPtr + byteLength);
+		var str;
+		if (typeof TextDecoder !== 'undefined') {
+			str = new TextDecoder('utf-8').decode(bytes);
+		} else {
+			str = '';
+			for (var i = 0; i < byteLength; i++) {
+				str += String.fromCharCode(bytes[i]);
+			}
+		}
 		entry.ws.send(str);
 		return 1;
 	},
