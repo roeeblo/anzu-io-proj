@@ -1,24 +1,16 @@
 using UnityEngine;
 using System;
-using System.Collections;
+using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-#if !UNITY_WEBGL || UNITY_EDITOR
-using System.Net.WebSockets;
-#endif
 
 public class NetworkProvider : MonoBehaviour
 {
 	[SerializeField] private string _serverUrl = "wss://socketrunner.onrender.com";
 	[SerializeField] private CommandParser _parser;
-	private const string UnityHandshakeAck = "{\"type\":\"HANDSHAKE_ACK\",\"client\":\"unity\"}";
 
-#if UNITY_WEBGL && !UNITY_EDITOR
-	private int _webGlSocketId = -1;
-#else
 	private ClientWebSocket _webSocket;
-#endif
 	private CancellationTokenSource _cts;
 	private readonly SemaphoreSlim _sendLock = new SemaphoreSlim(1, 1);
 	private bool _isShuttingDown = false;
@@ -30,120 +22,18 @@ public class NetworkProvider : MonoBehaviour
 			_parser = FindObjectOfType<CommandParser>();
 	}
 
-	private void Start()
+	private async void Start()
 	{
-#if UNITY_WEBGL && !UNITY_EDITOR
-		StartCoroutine(ConnectWebGLRoutine());
-#else
-		ConnectAsync();
-#endif
+		await ConnectAsync();
 	}
 
 	private void Update()
 	{
-#if UNITY_WEBGL && !UNITY_EDITOR
-		PollWebGLMessages();
-#endif
 		if (_quitOnConnectionLost)
 			Application.Quit();
 	}
 
-#if UNITY_WEBGL && !UNITY_EDITOR
-
-	private void SendWebGLUtf8Text(string json)
-	{
-		byte[] utf8 = Encoding.UTF8.GetBytes(json);
-		WebGLSocketNative.SR_WS_SendUtf8(_webGlSocketId, utf8, utf8.Length);
-	}
-
-	private IEnumerator ConnectWebGLRoutine()
-	{
-		_cts = new CancellationTokenSource();
-		Debug.Log("[Network] Connecting to: " + _serverUrl);
-		_webGlSocketId = WebGLSocketNative.SR_WS_Connect(_serverUrl);
-		if (_webGlSocketId < 0)
-		{
-			Debug.LogError("[Network] Connection failed (jslib)");
-			yield break;
-		}
-
-		float deadline = Time.realtimeSinceStartup + 30f;
-		while (Time.realtimeSinceStartup < deadline)
-		{
-			if (_isShuttingDown)
-				yield break;
-
-			int st = WebGLSocketNative.SR_WS_ReadyState(_webGlSocketId);
-			if (st == 1)
-			{
-				Debug.Log("[Network] Socket connected (WebGL)");
-				SendWebGLUtf8Text(UnityHandshakeAck);
-				Debug.Log("[Network] Sent HANDSHAKE_ACK (WebGL)");
-				yield break;
-			}
-			if (st == 2 || st == 3)
-			{
-				Debug.LogError("[Network] WebSocket closed before open");
-				WebGLSocketNative.SR_WS_Close(_webGlSocketId);
-				_webGlSocketId = -1;
-				yield break;
-			}
-			yield return null;
-		}
-
-		Debug.LogError("[Network] WebSocket connect timeout");
-		WebGLSocketNative.SR_WS_Close(_webGlSocketId);
-		_webGlSocketId = -1;
-	}
-
-	private void PollWebGLMessages()
-	{
-		if (_parser == null)
-			_parser = FindObjectOfType<CommandParser>();
-		if (_webGlSocketId < 0)
-			return;
-
-		int st = WebGLSocketNative.SR_WS_ReadyState(_webGlSocketId);
-		if (st != 1)
-		{
-			if (st == 2 || st == 3)
-			{
-				if (!_isShuttingDown)
-				{
-					Debug.Log("[Network] WebSocket closed (WebGL)");
-					_quitOnConnectionLost = true;
-				}
-			}
-			return;
-		}
-
-		byte[] buffer = new byte[2048];
-		while (true)
-		{
-			int n = WebGLSocketNative.SR_WS_Dequeue(_webGlSocketId, buffer, buffer.Length);
-			if (n == 0)
-				break;
-			if (n < 0)
-			{
-				Debug.LogError("[Network] Message too large for buffer");
-				break;
-			}
-
-			string rawMessage = Encoding.UTF8.GetString(buffer, 0, n);
-			Debug.Log("[Network] Received: " + rawMessage);
-
-			if (_parser == null)
-				_parser = FindObjectOfType<CommandParser>();
-			if (_parser != null)
-				_parser.ParseAndExecute(rawMessage);
-			else
-				Debug.LogError("[Network] No CommandParser in scene");
-		}
-	}
-
-#else
-
-	private async void ConnectAsync()
+	private async Task ConnectAsync()
 	{
 		_cts = new CancellationTokenSource();
 		_webSocket = new ClientWebSocket();
@@ -216,32 +106,8 @@ public class NetworkProvider : MonoBehaviour
 		}
 	}
 
-#endif
-
 	public async Task SendAsync(string json)
 	{
-#if UNITY_WEBGL && !UNITY_EDITOR
-		if (_webGlSocketId < 0 || WebGLSocketNative.SR_WS_ReadyState(_webGlSocketId) != 1)
-		{
-			Debug.LogWarning("[Network] Cannot send message, socket is not open");
-			return;
-		}
-
-		await _sendLock.WaitAsync(_cts.Token);
-		try
-		{
-			SendWebGLUtf8Text(json);
-			Debug.Log("[Network] Sent: " + json);
-		}
-		catch (Exception e)
-		{
-			Debug.LogError("[Network] Send error: " + e.Message);
-		}
-		finally
-		{
-			_sendLock.Release();
-		}
-#else
 		if (_webSocket == null || _webSocket.State != WebSocketState.Open)
 		{
 			Debug.LogWarning("[Network] Cannot send message, socket is not open");
@@ -270,50 +136,14 @@ public class NetworkProvider : MonoBehaviour
 		{
 			_sendLock.Release();
 		}
-#endif
 	}
 
-	private void OnApplicationQuit()
+	private async void OnApplicationQuit()
 	{
-#if UNITY_WEBGL && !UNITY_EDITOR
-		ShutdownWebGL();
-#else
-		ShutdownAsync();
-#endif
+		await ShutdownAsync();
 	}
 
-#if UNITY_WEBGL && !UNITY_EDITOR
-
-	private void ShutdownWebGL()
-	{
-		_isShuttingDown = true;
-		try
-		{
-			if (_cts != null && !_cts.IsCancellationRequested)
-				_cts.Cancel();
-			if (_webGlSocketId >= 0)
-			{
-				WebGLSocketNative.SR_WS_Close(_webGlSocketId);
-				_webGlSocketId = -1;
-			}
-		}
-		catch (Exception e)
-		{
-			Debug.LogWarning("[Network] Shutdown warning: " + e.Message);
-		}
-		finally
-		{
-			if (_cts != null)
-			{
-				_cts.Dispose();
-				_cts = null;
-			}
-		}
-	}
-
-#else
-
-	private async void ShutdownAsync()
+	private async Task ShutdownAsync()
 	{
 		_isShuttingDown = true;
 
@@ -352,6 +182,4 @@ public class NetworkProvider : MonoBehaviour
 			}
 		}
 	}
-
-#endif
 }
