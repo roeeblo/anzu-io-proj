@@ -16,6 +16,7 @@ public class PayloadData
 	public float x;
 	public float y;
 	public float amount;
+	public bool flag;
 }
 
 public class CommandParser : MonoBehaviour

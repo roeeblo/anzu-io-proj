@@ -8,14 +8,14 @@ public class CommandFactoryTest
 	[Test]
 	public void Create_NullData_ReturnsNull()
 	{
-		Assert.IsNull(CommandFactory.Create(null, null));
+		Assert.IsNull(CommandFactory.Create(null, null, null));
 	}
 
 	[Test]
 	public void Create_ADD_SCORE_WithPayloadAmount_ReturnsAddScoreCommand()
 	{
 		var data = new NetworkData { type = "ADD_SCORE", payload = new PayloadData { amount = 5 } };
-		ICommand cmd = CommandFactory.Create(data, null);
+		ICommand cmd = CommandFactory.Create(data, null, null);
 		Assert.IsNotNull(cmd);
 		Assert.IsInstanceOf<AddScoreCommand>(cmd);
 	}
@@ -24,7 +24,7 @@ public class CommandFactoryTest
 	public void Create_ADD_SCORE_NoPayload_ReturnsAddScoreCommand()
 	{
 		var data = new NetworkData { type = "ADD_SCORE" };
-		ICommand cmd = CommandFactory.Create(data, null);
+		ICommand cmd = CommandFactory.Create(data, null, null);
 		Assert.IsNotNull(cmd);
 		Assert.IsInstanceOf<AddScoreCommand>(cmd);
 	}
@@ -33,7 +33,7 @@ public class CommandFactoryTest
 	public void Create_UnknownType_WithNullPlayer_ReturnsNull()
 	{
 		var data = new NetworkData { type = "MOVE_LEFT" };
-		Assert.IsNull(CommandFactory.Create(data, null));
+		Assert.IsNull(CommandFactory.Create(data, null, null));
 	}
 
 	[UnityTest]
@@ -46,7 +46,7 @@ public class CommandFactoryTest
 		yield return null;
 
 		var data = new NetworkData { type = "MOVE_LEFT" };
-		ICommand cmd = CommandFactory.Create(data, player);
+		ICommand cmd = CommandFactory.Create(data, player, null);
 		Assert.IsNotNull(cmd);
 		Assert.IsInstanceOf<MoveLeftCommand>(cmd);
 
@@ -63,7 +63,7 @@ public class CommandFactoryTest
 		yield return null;
 
 		var data = new NetworkData { type = "MOVE_RIGHT" };
-		ICommand cmd = CommandFactory.Create(data, player);
+		ICommand cmd = CommandFactory.Create(data, player, null);
 		Assert.IsNotNull(cmd);
 		Assert.IsInstanceOf<MoveRightCommand>(cmd);
 
@@ -80,7 +80,7 @@ public class CommandFactoryTest
 		yield return null;
 
 		var data = new NetworkData { type = "STOP" };
-		ICommand cmd = CommandFactory.Create(data, player);
+		ICommand cmd = CommandFactory.Create(data, player, null);
 		Assert.IsNotNull(cmd);
 		Assert.IsInstanceOf<StopCommand>(cmd);
 
@@ -97,7 +97,7 @@ public class CommandFactoryTest
 		yield return null;
 
 		var data = new NetworkData { type = "JUMP" };
-		ICommand cmd = CommandFactory.Create(data, player);
+		ICommand cmd = CommandFactory.Create(data, player, null);
 		Assert.IsNotNull(cmd);
 		Assert.IsInstanceOf<JumpCommand>(cmd);
 
@@ -118,7 +118,7 @@ public class CommandFactoryTest
 			type = "SPAWN_ITEM",
 			payload = new PayloadData { prefabType = "gem", x = 1f, y = 2f }
 		};
-		ICommand cmd = CommandFactory.Create(data, player);
+		ICommand cmd = CommandFactory.Create(data, player, null);
 		Assert.IsNotNull(cmd);
 		Assert.IsInstanceOf<SpawnItemCommand>(cmd);
 
@@ -135,7 +135,7 @@ public class CommandFactoryTest
 		yield return null;
 
 		var data = new NetworkData { type = "SPAWN_ITEM", payload = new PayloadData { prefabType = "" } };
-		Assert.IsNull(CommandFactory.Create(data, player));
+		Assert.IsNull(CommandFactory.Create(data, player, null));
 
 		Object.DestroyImmediate(go);
 	}

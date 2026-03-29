@@ -2,7 +2,7 @@ using UnityEngine;
 
 public static class CommandFactory
 {
-	public static ICommand Create(NetworkData data, PlayerController player)
+	public static ICommand Create(NetworkData data, PlayerController player, TowerCamera camera)
 	{
 		if (data == null)
 			return null;
@@ -14,6 +14,26 @@ public static class CommandFactory
 			if (data.payload != null && data.payload.amount > 0)
 				amount = (int)data.payload.amount;
 			return new AddScoreCommand(amount);
+		}
+
+		if (type == "TREE1_COMMAND")
+		{
+			Debug.Log("Reached CommandFactory TREE1");
+			bool flag = true;
+			if (data.payload != null && data.payload.flag == true)
+				flag = (bool)data.payload.flag;
+			return new Tree1Command(flag);
+
+		}
+
+		if (type == "TREE2_COMMAND")
+		{
+			Debug.Log("Reached CommandFactory TREE2");
+			bool flag = true;
+			if (data.payload != null && data.payload.flag == true)
+				flag = (bool)data.payload.flag;
+			return new Tree2Command(flag);
+
 		}
 
 		if (player == null)
@@ -30,6 +50,7 @@ public static class CommandFactory
 				float x = data.payload?.x ?? 0f;
 				float y = data.payload?.y ?? 0f;
 				return string.IsNullOrEmpty(prefabType) ? null : new SpawnItemCommand(player, prefabType, x, y);
+
 			default:
 				return null;
 		}

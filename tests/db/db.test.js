@@ -10,7 +10,7 @@ beforeAll(async () => {
   const { MongoMemoryServer } = require('mongodb-memory-server');
   mongod = await MongoMemoryServer.create();
   process.env.MONGODB_URI = mongod.getUri();
-  process.env.MONGODB_DB = 'anzu_test';
+  process.env.MONGODB_DB = 'socketrunner_test';
   delete require.cache[dbPath];
   dbModule = require(dbPath);
   await dbModule.connect();
@@ -33,7 +33,7 @@ describe('DB', () => {
   it('connect() returns db and getDb() returns same', async () => {
     const d = dbModule.getDb();
     expect(d).not.toBeNull();
-    expect(d.databaseName).toBe('anzu_test');
+    expect(d.databaseName).toBe('socketrunner_test');
   });
 
   it('seedSpawnables creates gem and cherry', async () => {

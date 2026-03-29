@@ -1,5 +1,5 @@
 {
-  "name": "anzu-io-proj",
+  "name": "socketrunner-proj",
   "private": true,
   "scripts": {
     "test": "jest --runInBand"

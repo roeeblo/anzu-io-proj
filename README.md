@@ -1,7 +1,7 @@
-## Anzu.io: Server-Unity Communication
+## SocketRunner: Server–Unity communication
 
 This project focuses on the communication architecture between a Node.js server and a Unity client.  
-The unity gameplay itself is intentionally minimal and not meant to be a fully designed game.
+The Unity gameplay itself is intentionally minimal and not meant to be a fully designed game.
 
 Node.js WebSocket server and Unity client that communicate through commands, with a browser controller for manual input.
 
@@ -90,7 +90,7 @@ Spawns an item (for example gem or cherry) at a position. Payload includes prefa
 ## Requirements
 
 - Node.js 18 or newer
-- Unity 2018 or newer (open the anzu.io_unity project)
+- Unity 2018 or newer (open the `socketrunner_unity` project)
 - MongoDB optional
 
 ## How to run
@@ -123,7 +123,7 @@ SPAWN_ITEM gem 0 0
 SPAWN_ITEM cherry 2 -1
 
 5. Run the Unity client
-Open Unity Hub → Open Project → select the anzu.io_unity folder.
+Open Unity Hub → Open Project → select the `socketrunner_unity` folder.
 Open the main scene and press Play.
 Commands from the browser or terminal will now affect the game.
 
@@ -164,13 +164,13 @@ Run:
 
 ## Project structure
 
-anzu-io-proj/
+socketrunner-proj/
 
 server/  
 Node server (src/app.js, db.js, commands)  
 public/ contains the browser UI (index.html)
 
-anzu.io_unity/  
+socketrunner_unity/  
 Unity client
 
 tests/  

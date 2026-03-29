@@ -5,6 +5,7 @@ public class CommandExecutor : MonoBehaviour
 {
 	[SerializeField] private PlayerController _player;
 	[SerializeField] private NetworkProvider _network;
+	[SerializeField] private TowerCamera _camera;
 
 	public void Execute(NetworkData data)
 	{
@@ -25,7 +26,8 @@ public class CommandExecutor : MonoBehaviour
 			case "HANDSHAKE":
 				HandleHandshake(data);
 				break;
-
+			case "TREE1_COMMAND":
+			case "TREE2_COMMAND":
 			case "MOVE_LEFT":
 			case "MOVE_RIGHT":
 			case "STOP":
@@ -62,7 +64,7 @@ public class CommandExecutor : MonoBehaviour
 			return;
 		}
 
-		ICommand command = CommandFactory.Create(data, _player);
+		ICommand command = CommandFactory.Create(data, _player, _camera);
 		if (command == null)
 		{
 			Debug.LogWarning("[Executor] Could not create command for: " + data.type);

@@ -1,0 +1,10 @@
+{
+    "name": "SocketRunner.Tests.PlayMode",
+    "references": [
+        "SocketRunner.Game"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": []
+}

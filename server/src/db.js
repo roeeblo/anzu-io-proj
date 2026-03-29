@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 
 const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017';
-const dbName = process.env.MONGODB_DB || 'anzu';
+const dbName = process.env.MONGODB_DB || 'socketrunner';
 
 let _client;
 let _db;
@@ -13,10 +13,9 @@ const spawnablesSeed = [
 
 async function connect() {
   if (_db) return _db;
-  const shortTimeout = process.env.NODE_ENV === 'test' || process.env.CI === 'true';
-  const options = shortTimeout
-    ? { connectTimeoutMS: 3000, serverSelectionTimeoutMS: 3000 }
-    : {};
+  const connectTimeoutMS = Number(process.env.MONGODB_CONNECT_TIMEOUT_MS) || 5000;
+  const serverSelectionTimeoutMS = Number(process.env.MONGODB_SERVER_SELECTION_TIMEOUT_MS) || 5000;
+  const options = { connectTimeoutMS, serverSelectionTimeoutMS };
   _client = new MongoClient(uri, options);
   await _client.connect();
   _db = _client.db(dbName);

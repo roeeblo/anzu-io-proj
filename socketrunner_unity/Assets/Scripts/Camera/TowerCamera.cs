@@ -46,4 +46,16 @@ public class TowerCamera : MonoBehaviour
 		Vector3 goal = new Vector3(camX, _cameraTargetY, transform.position.z);
 		transform.position = Vector3.SmoothDamp(transform.position, goal, ref _velocity, _smoothTime);
 	}
+
+	public void setActiveCamera(bool flag)
+	{
+		if (flag == true)
+		{
+			this.gameObject.SetActive(true);
+		}
+		else
+		{
+			this.gameObject.SetActive(false);
+		}
+	}
 }

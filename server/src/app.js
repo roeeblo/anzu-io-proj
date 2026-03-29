@@ -6,7 +6,7 @@ const readline = require('readline');
 const { create: createCommand, getValidTypes } = require('./commands/CommandFactory');
 const { connect: connectDb, getDb } = require('./db');
 
-const COMMAND_TYPES = new Set(['MOVE_LEFT', 'MOVE_RIGHT', 'STOP', 'JUMP', 'SPAWN_ITEM', 'ADD_SCORE']);
+const COMMAND_TYPES = new Set(['MOVE_LEFT', 'MOVE_RIGHT', 'STOP', 'JUMP', 'SPAWN_ITEM', 'ADD_SCORE', 'TREE1_COMMAND', 'TREE2_COMMAND']);
 let currentClient = null;
 const allConnections = new Set();
 let db = null;
@@ -159,7 +159,7 @@ function start(port = 8080, options = {}) {
   })();
 }
 
-if (process.env.NODE_ENV !== 'test') start(8080);
+if (require.main === module) start(8080);
 
 function scheduleIdleClose(ws) {
   if (!idleTimeoutMs || idleTimeoutMs <= 0) return;
@@ -213,7 +213,7 @@ wss.on('connection', (ws) => {
   });
 });
 
-if (process.env.NODE_ENV !== 'test') {
+if (require.main === module) {
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
   rl.on('line', async (line) => {
   const parts = line.trim().split(/\s+/).filter(Boolean);
@@ -232,7 +232,7 @@ if (process.env.NODE_ENV !== 'test') {
 
   const command = createCommand(cmd, arg, db || getDb(), BOUNDS);
   if (!command) {
-    console.log('Unknown command. Use: MOVE_LEFT, MOVE_RIGHT, STOP, JUMP, SPAWN_ITEM itemId x y, or ADD_SCORE amount');
+    console.log('Unknown command. Use: MOVE_LEFT, TREE1 / 2 _COMMAND, MOVE_RIGHT, STOP, JUMP, SPAWN_ITEM itemId x y, or ADD_SCORE amount');
     return;
   }
 

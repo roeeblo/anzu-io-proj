@@ -5,6 +5,12 @@ using System.Collections;
 
 public class GameManagerScoreTest
 {
+	[TearDown]
+	public void TearDown()
+	{
+		Time.timeScale = 1f;
+	}
+
 	[UnityTest]
 	public IEnumerator AddScore_Reaches100_GameWonIsTrue()
 	{

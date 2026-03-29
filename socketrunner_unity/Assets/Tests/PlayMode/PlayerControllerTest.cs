@@ -2,12 +2,42 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using System.Collections;
+using System.Reflection;
 
 public class PlayerControllerTest
 {
 	private GameObject _playerGo;
 	private PlayerController _player;
 	private Rigidbody2D _rb;
+
+	private static readonly MethodInfo FixedUpdateMethod =
+		typeof(PlayerController).GetMethod("FixedUpdate", BindingFlags.Instance | BindingFlags.NonPublic);
+
+	private static FieldInfo FindField(System.Type t, System.Type fieldType)
+	{
+		foreach (var f in t.GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
+		{
+			if (f.FieldType == fieldType)
+				return f;
+		}
+		return null;
+	}
+
+	private static readonly FieldInfo PlayerRbField = FindField(typeof(PlayerController), typeof(Rigidbody2D));
+	private static readonly FieldInfo PlayerColField = FindField(typeof(PlayerController), typeof(Collider2D));
+
+	private static void WirePlayerPhysics(PlayerController player, Rigidbody2D rb, Collider2D col)
+	{
+		if (PlayerRbField != null)
+			PlayerRbField.SetValue(player, rb);
+		if (PlayerColField != null)
+			PlayerColField.SetValue(player, col);
+	}
+
+	private static void InvokeFixedUpdate(PlayerController player)
+	{
+		FixedUpdateMethod.Invoke(player, null);
+	}
 
 	[UnitySetUp]
 	public IEnumerator SetUp()
@@ -17,6 +47,7 @@ public class PlayerControllerTest
 		_rb = _playerGo.AddComponent<Rigidbody2D>();
 		_rb.gravityScale = 0f;
 		_player = _playerGo.AddComponent<PlayerController>();
+		WirePlayerPhysics(_player, _rb, _playerGo.GetComponent<Collider2D>());
 		yield return null;
 	}
 
@@ -32,26 +63,28 @@ public class PlayerControllerTest
 	public IEnumerator MoveLeft_ThenFixedUpdate_VelocityXNegative()
 	{
 		_player.MoveLeft();
-		yield return new WaitForFixedUpdate();
+		InvokeFixedUpdate(_player);
 		Assert.Less(_rb.velocity.x, 0f);
+		yield return null;
 	}
 
 	[UnityTest]
 	public IEnumerator MoveRight_ThenFixedUpdate_VelocityXPositive()
 	{
 		_player.MoveRight();
-		yield return new WaitForFixedUpdate();
+		InvokeFixedUpdate(_player);
 		Assert.Greater(_rb.velocity.x, 0f);
+		yield return null;
 	}
 
 	[UnityTest]
 	public IEnumerator Stop_ThenFixedUpdate_VelocityXZero()
 	{
 		_player.MoveRight();
-		yield return new WaitForFixedUpdate();
+		InvokeFixedUpdate(_player);
 		_player.Stop();
-		yield return new WaitForFixedUpdate();
 		Assert.AreEqual(0f, _rb.velocity.x, 0.01f);
+		yield return null;
 	}
 
 	[UnityTest]

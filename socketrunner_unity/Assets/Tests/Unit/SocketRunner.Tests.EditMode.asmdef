@@ -1,0 +1,12 @@
+{
+    "name": "SocketRunner.Tests.EditMode",
+    "references": [
+        "SocketRunner.Game"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ]
+}

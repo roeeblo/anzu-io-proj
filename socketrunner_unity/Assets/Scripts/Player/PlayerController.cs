@@ -177,6 +177,15 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
+	public void setActivePlayer(bool flag)
+	{
+		if (flag == true)
+		{
+			this.gameObject.SetActive(false);
+		}
+
+	}
+
 	public void SpawnItem(string prefabType, float x, float y)
 	{
 		if (_spawnables == null || string.IsNullOrEmpty(prefabType)) return;

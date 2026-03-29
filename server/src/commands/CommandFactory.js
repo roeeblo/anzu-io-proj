@@ -4,6 +4,8 @@ const { StopCommand } = require('./StopCommand');
 const { JumpCommand } = require('./JumpCommand');
 const { SpawnItemCommand } = require('./SpawnItemCommand');
 const { AddScoreCommand } = require('./AddScoreCommand');
+const { Tree1Command } = require('./Tree1Command');
+const { Tree2Command } = require('./Tree2Command');
 
 const _commands = {
   MOVE_LEFT: new MoveLeftCommand(),
@@ -12,12 +14,21 @@ const _commands = {
   JUMP: new JumpCommand(),
 };
 
-function create(type, arg, db, bounds) {
+function create(type, arg, flag, db, bounds) {
   const key = (type || '').toUpperCase();
   if (key === 'SPAWN_ITEM')
     return new SpawnItemCommand(arg, db, bounds);
   if (key === 'ADD_SCORE')
     return new AddScoreCommand(arg);
+  if (key === 'TREE1_COMMAND'){
+    console.log('reached TREE1COMMAND FACTORY js');
+    return new Tree1Command(flag);
+    }
+  if (key === 'TREE2_COMMAND'){
+    console.log('reached TREE2COMMAND FACTORY js');
+    return new Tree2Command(flag);
+  }
+
   return _commands[key] || null;
 }
 
