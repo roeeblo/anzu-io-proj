@@ -12,6 +12,7 @@ public class NetworkProvider : MonoBehaviour
 {
 	[SerializeField] private string _serverUrl = "wss://socketrunner.onrender.com";
 	[SerializeField] private CommandParser _parser;
+	private const string UnityHandshakeAck = "{\"type\":\"HANDSHAKE_ACK\",\"client\":\"unity\"}";
 
 #if UNITY_WEBGL && !UNITY_EDITOR
 	private int _webGlSocketId = -1;
@@ -70,6 +71,8 @@ public class NetworkProvider : MonoBehaviour
 			if (st == 1)
 			{
 				Debug.Log("[Network] Socket connected (WebGL)");
+				WebGLSocketNative.SR_WS_SendStr(_webGlSocketId, UnityHandshakeAck);
+				Debug.Log("[Network] Sent HANDSHAKE_ACK (WebGL)");
 				yield break;
 			}
 			if (st == 2 || st == 3)
