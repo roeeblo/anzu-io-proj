@@ -10,7 +10,7 @@ Node.js WebSocket server and Unity client that communicate through commands, wit
 
 - WebSocket handshake between server and Unity client.
 - Command system (move, jump, stop, add score, spawn items).
-- Browser UI to send commands (http://localhost:8080).
+- Browser UI to send commands (https://socketrunner.onrender.com).
 - Commands can also be sent from the server terminal (when running without Docker).
 - Unity executes commands and sends responses back to the server.
 - Optional MongoDB support for spawnable items (gem, cherry).
@@ -135,9 +135,9 @@ The server will start on http://localhost:8080.
 Leave the terminal open (!!!)
 
 3. Browser controller (optional, but recommended :) )
-http://localhost:8080
+https://socketrunner.onrender.com
 
-4. Commands from terminal (optional)
+5. Commands from terminal (optional)
 In the server terminal you can type commands directly:
 MOVE_LEFT
 MOVE_RIGHT
@@ -148,7 +148,7 @@ ADD_SCORE 50
 SPAWN_ITEM gem 0 0
 SPAWN_ITEM cherry 2 -1
 
-5. Run the Unity client
+6. Run the Unity client
 Open Unity Hub → Open Project → select the `socketrunner_unity` folder.
 Open the main scene and press Play.
 Commands from the browser or terminal will now affect the game.
@@ -160,7 +160,7 @@ WITH DOCKER (Option 2):
 From the project root run:
 docker compose up --build
 
-Keep the terminal open. Then open http://localhost:8080 in your browser
+Keep the terminal open. Then open https://socketrunner.onrender.com in your browser
 
 Leave the container running.
 
